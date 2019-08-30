@@ -43,11 +43,15 @@ def download(start: int, end: int) -> None:
         label = re.search("v_(.+?)_.+", basename).group(1)
         dpath = os.path.join(DOWNLOAD_PATH, label)
         fpath = os.path.join(dpath, basename)
-        print("[{}] Download [{:5}] - {}".format(now(), i, basename))
         
         if not os.path.exists(dpath):
             os.makedirs(dpath)
+            
+        if os.path.exists(fpath):
+            print("[{}] Already exist [{:5}] - {}".format(now(), i, basename))
+            continue
         
+        print("[{}] Download [{:5}] - {}".format(now(), i, basename))
         with requests.get(link) as resp:
             with open(fpath, "wb") as f:
                 f.write(resp.content)
