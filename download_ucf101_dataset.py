@@ -14,7 +14,7 @@ DOWNLOAD_PATH = "./download"
 def now():
     return datetime.now().strftime("%H:%M:%S")
 
-def download(start: int, end: int) -> None:
+def download(start=0, end=-1) -> None:
     # Getting list of UCF-101 video data
     URL_UCF101_VIDEOS = "https://www.crcv.ucf.edu/THUMOS14/UCF101/UCF101/"
     URL_UCF101_CLASS_LIST = "http://crcv.ucf.edu/THUMOS14/Class%20Index.txt"
@@ -38,7 +38,7 @@ def download(start: int, end: int) -> None:
         # https://www.crcv.ucf.edu/THUMOS14/UCF101/UCF101/v_ApplyEyeMakeup_g02_c02.avi
     
     # Download each videos
-    for i, link in enumerate(links):
+    for i, link in enumerate(links, start):
         basename = os.path.basename(link)
         label = re.search("v_(.+?)_.+", basename).group(1)
         dpath = os.path.join(DOWNLOAD_PATH, label)
