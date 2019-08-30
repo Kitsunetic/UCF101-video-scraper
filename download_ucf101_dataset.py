@@ -4,11 +4,15 @@ import itertools
 import os
 import re
 import sys
+from datetime import datetime
 
 import requests
 from bs4 import BeautifulSoup
 
 DOWNLOAD_PATH = "./download"
+
+def now():
+    return datetime.now().strftime("%H:%M:%S")
 
 def download(start: int, end: int) -> None:
     # Getting list of UCF-101 video data
@@ -16,14 +20,14 @@ def download(start: int, end: int) -> None:
     URL_UCF101_CLASS_LIST = "http://crcv.ucf.edu/THUMOS14/Class%20Index.txt"
     BASE_URL = "https://www.crcv.ucf.edu/THUMOS14/UCF101/UCF101/"
 
-    print("Reading video list...")
+    print("[{}] Reading video list...".format(now()))
     with requests.get(URL_UCF101_VIDEOS) as resp:
         soup = BeautifulSoup(resp.text, "lxml")
         links = soup.select_one("table")
         links = soup.select("tr")[3:-1]
         links = map(lambda x: BASE_URL + x.select_one("a")["href"], links)
         links = itertools.islice(links, start, end if end >= 0 else None)
-        # links example...
+        # links example... contains 13320 videos
         # https://www.crcv.ucf.edu/THUMOS14/UCF101/UCF101/v_ApplyEyeMakeup_g01_c01.avi
         # https://www.crcv.ucf.edu/THUMOS14/UCF101/UCF101/v_ApplyEyeMakeup_g01_c02.avi
         # https://www.crcv.ucf.edu/THUMOS14/UCF101/UCF101/v_ApplyEyeMakeup_g01_c03.avi
@@ -39,7 +43,7 @@ def download(start: int, end: int) -> None:
         label = re.search("v_(.+?)_.+", basename).group(1)
         dpath = os.path.join(DOWNLOAD_PATH, label)
         fpath = os.path.join(dpath, basename)
-        print("Download [{:5}] - {}".format(i, basename))
+        print("[{}] Download [{:5}] - {}".format(now(), i, basename))
         
         if not os.path.exists(dpath):
             os.makedirs(dpath)
