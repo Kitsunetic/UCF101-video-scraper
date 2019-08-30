@@ -52,9 +52,12 @@ def download(start=0, end=-1) -> None:
             continue
         
         print("[{}] Download [{:5}] - {}".format(now(), i, basename))
-        with requests.get(link) as resp:
-            with open(fpath, "wb") as f:
-                f.write(resp.content)
+        try:
+            with requests.get(link) as resp:
+                with open(fpath, "wb") as f:
+                    f.write(resp.content)
+        except:
+            print("[{}] [ERROR!] Cannot download [{:5}] - {}".format(now(), i, basename))
 
 def main() -> None:
     parser = argparse.ArgumentParser()
