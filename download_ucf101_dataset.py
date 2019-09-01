@@ -56,8 +56,10 @@ def download(start=0, end=-1) -> None:
             with requests.get(link) as resp:
                 with open(fpath, "wb") as f:
                     f.write(resp.content)
-        except:
-            print("[{}] [ERROR!] Cannot download [{:5}] - {}".format(now(), i, basename))
+        except KeyboardInterrupt as e:
+            raise e
+        except Exception as e:
+            print("[{}] [ERROR!] Cannot download [{:5}] - {}\n{}".format(now(), i, basename, e))
 
 def main() -> None:
     parser = argparse.ArgumentParser()
