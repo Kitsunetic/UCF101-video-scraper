@@ -48,9 +48,9 @@ def main():
     # download video
     if os.path.exists(file_path):
       # don't download that already downloaded
-      print('[{}] {} already exist.'.format(now(), name))
+      print('[{}] [{:05d}/{:05d}] {} already exist.'.format(now(), i, len(links), name))
     else:
-      print('[{}] Download [{:5}] - {}'.format(now(), i, name))
+      print('[{}] Download [{:05d}/{:05d}] - {}'.format(now(), i, len(links), name))
       download_video(link, file_path)
 
 if __name__ == '__main__':
