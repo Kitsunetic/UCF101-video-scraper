@@ -11,10 +11,16 @@ from bs4 import BeautifulSoup
 
 DOWNLOAD_PATH = './download'
 
-def now():
+def now() -> str:
   return datetime.now().strftime('%H:%M:%S')
 
-def download(start=0, end=-1) -> None:
+def download_video(url: str, path: str) -> int:
+  with requests.get(link) as resp:
+    with open(fpath, 'wb') as f:
+      f.write(resp.content)
+    return len(resp.content)
+
+def main():
   # Getting list of UCF-101 video data
   URL_UCF101_VIDEOS = 'https://www.crcv.ucf.edu/THUMOS14/UCF101/UCF101/'
   URL_UCF101_CLASS_LIST = 'http://crcv.ucf.edu/THUMOS14/Class%20Index.txt'
@@ -26,48 +32,26 @@ def download(start=0, end=-1) -> None:
     links = soup.select_one('table')
     links = soup.select('tr')[3:-1]
     links = map(lambda x: BASE_URL + x.select_one('a')['href'], links)
-    links = itertools.islice(links, start, end if end >= 0 else None)
-    # links example... contains 13320 videos
-    # https://www.crcv.ucf.edu/THUMOS14/UCF101/UCF101/v_ApplyEyeMakeup_g01_c01.avi
-    # https://www.crcv.ucf.edu/THUMOS14/UCF101/UCF101/v_ApplyEyeMakeup_g01_c02.avi
-    # https://www.crcv.ucf.edu/THUMOS14/UCF101/UCF101/v_ApplyEyeMakeup_g01_c03.avi
-    # https://www.crcv.ucf.edu/THUMOS14/UCF101/UCF101/v_ApplyEyeMakeup_g01_c04.avi
-    # https://www.crcv.ucf.edu/THUMOS14/UCF101/UCF101/v_ApplyEyeMakeup_g01_c05.avi
-    # https://www.crcv.ucf.edu/THUMOS14/UCF101/UCF101/v_ApplyEyeMakeup_g01_c06.avi
-    # https://www.crcv.ucf.edu/THUMOS14/UCF101/UCF101/v_ApplyEyeMakeup_g02_c01.avi
-    # https://www.crcv.ucf.edu/THUMOS14/UCF101/UCF101/v_ApplyEyeMakeup_g02_c02.avi
   
   # Download each videos
-  for i, link in enumerate(links, start):
-    basename = os.path.basename(link)
-    label = re.search('v_(.+?)_.+', basename).group(1)
-    dpath = os.path.join(DOWNLOAD_PATH, label)
-    fpath = os.path.join(dpath, basename)
+  for i, link in enumerate(links):
+    # find video path
+    name = os.path.basename(url)
+    label = re.search('v_(.+?)_.+', name)
+    dir_path = os.path.join(DOWNLOAD_PATH, label)
+    path = os.path.join(dir_path, name)
     
-    if not os.path.exists(dpath):
-      os.makedirs(dpath)
-      
+    # make directory
+    if not os.path.exists(dir_path):
+      os.makedirs(dir_path)
+    
+    # download video
     if os.path.exists(fpath):
-      print('[{}] Already exist [{:5}] - {}'.format(now(), i, basename))
-      continue
-    
-    print('[{}] Download [{:5}] - {}'.format(now(), i, basename))
-    try:
-      with requests.get(link) as resp:
-        with open(fpath, 'wb') as f:
-          f.write(resp.content)
-    except KeyboardInterrupt as e:
-      raise e
-    except Exception as e:
-      print('[{}] [ERROR!] Cannot download [{:5}] - {}\n{}'.format(now(), i, basename, e))
-
-def main() -> None:
-  parser = argparse.ArgumentParser()
-  parser.add_argument('--start', '-s', type=int, default=0, help='start index')
-  parser.add_argument('--end', '-e', type=int, default=-1, help='end index')
-  p = parser.parse_args(sys.argv[1:])
-  
-  download(p.start, p.end)
+      # don't download that already downloaded
+      print('[{}] {} already exist.'.format(now(), name))
+    else:
+      print('[{}] Download [{:5}] - {}'.format(now(), i, basename))
+      download_video(link, path)
 
 if __name__ == '__main__':
   main()
