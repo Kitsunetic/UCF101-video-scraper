@@ -16,10 +16,23 @@ Check [requirements.txt](./requirements.txt)
 - requests
 - bs4
 
+```bash
+sudo pip3 install requests bs4
+```
+
 ## Usage
 
 ```bash
 git clone https://github.com/Kitsunetic/download-ucf101-videos
 pip3 install -r requirements.txt
 python3 download_ucf101_dataset.py
+```
+
+## Download Path
+
+You can specify download path by editing [download_ucf101_dataset.py](./download_ucf101_dataset.py)
+Change global variable `DOWNLOAD_PATH` into what you want to download videos files.
+
+```python
+DOWNLOAD_PATH = '{directory path to download video files}'
 ```
