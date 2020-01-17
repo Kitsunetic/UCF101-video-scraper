@@ -32,6 +32,7 @@ def main():
     links = soup.select_one('table')
     links = soup.select('tr')[3:-1]
     links = map(lambda x: BASE_URL + x.select_one('a')['href'], links)
+    links = list(links)
   
   # Download each videos
   for i, link in enumerate(links):
@@ -48,9 +49,9 @@ def main():
     # download video
     if os.path.exists(file_path):
       # don't download that already downloaded
-      print('[{}] [{:05d}/{:05d}] {} already exist.'.format(now(), i, len(links), name))
+      print('[{} {:05d}/{:05d}] {} already exist.'.format(now(), i, len(links), name))
     else:
-      print('[{}] Download [{:05d}/{:05d}] - {}'.format(now(), i, len(links), name))
+      print('[{} {:05d}/{:05d}] Download - {}'.format(now(), i, len(links), name))
       download_video(link, file_path)
 
 if __name__ == '__main__':
