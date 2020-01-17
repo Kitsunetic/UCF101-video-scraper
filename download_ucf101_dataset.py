@@ -14,7 +14,7 @@ DOWNLOAD_PATH = './download'
 def now() -> str:
   return datetime.now().strftime('%H:%M:%S')
 
-def download_video(url: str, path: str) -> int:
+def download_video(link: str, fpath: str) -> int:
   with requests.get(link) as resp:
     with open(fpath, 'wb') as f:
       f.write(resp.content)
@@ -36,22 +36,22 @@ def main():
   # Download each videos
   for i, link in enumerate(links):
     # find video path
-    name = os.path.basename(url)
-    label = re.search('v_(.+?)_.+', name)
+    name = os.path.basename(link)
+    label = re.search('v_(.+?)_.+', name).group(1)
     dir_path = os.path.join(DOWNLOAD_PATH, label)
-    path = os.path.join(dir_path, name)
+    file_path = os.path.join(dir_path, name)
     
     # make directory
     if not os.path.exists(dir_path):
       os.makedirs(dir_path)
     
     # download video
-    if os.path.exists(fpath):
+    if os.path.exists(file_path):
       # don't download that already downloaded
       print('[{}] {} already exist.'.format(now(), name))
     else:
-      print('[{}] Download [{:5}] - {}'.format(now(), i, basename))
-      download_video(link, path)
+      print('[{}] Download [{:5}] - {}'.format(now(), i, name))
+      download_video(link, file_path)
 
 if __name__ == '__main__':
   main()
